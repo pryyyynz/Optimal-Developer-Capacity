@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from xgboost import XGBRegressor
 
 # Load the dataset for preprocessing
-ai_dev_productivity_df = pd.read_csv("./ai_developer_productivity_data/ai_dev_productivity.csv")
+ai_dev_productivity_df = pd.read_csv("ai_dev_productivity_updated.csv")
 
 # Preprocess the data
 X = ai_dev_productivity_df.drop(columns=['optimal_hours_tomorrow'])
@@ -48,27 +48,36 @@ def predict_optimal_hours(hours_coding, coffee_intake_mg, distractions, sleep_ho
 
     # Predict using the model
     prediction = model.predict(features_scaled)
-    return prediction[0]
+    return f"{prediction[0]:.2f}"
 
 # Create the Gradio interface
 inputs = [
-    gr.Number(label="Hours Coding"),
-    gr.Number(label="Coffee Intake (mg)"),
-    gr.Number(label="Distractions"),
-    gr.Number(label="Sleep Hours"),
-    gr.Number(label="Commits"),
-    gr.Number(label="Bugs Reported"),
-    gr.Number(label="AI Usage Hours"),
-    gr.Number(label="Cognitive Load"),
-    gr.Number(label="Task Success (0 or 1)")
+    gr.Number(label="Coding Hours Today", info="How many hours did you code today?"),
+    gr.Number(label="Coffee Intake (mg)", info="Total caffeine consumed today (mg)"),
+    gr.Number(label="Number of Distractions", info="How many times were you distracted?"),
+    gr.Number(label="Sleep Hours", info="How many hours did you sleep last night?"),
+    gr.Number(label="Number of Commits", info="Total code commits today"),
+    gr.Number(label="Bugs Encountered", info="How many bugs did you encounter?"),
+    gr.Number(label="AI Usage Hours (Claude, Copilot, etc.)", info="Hours spent using AI tools"),
+    gr.Slider(minimum=0, maximum=10, step=1, label="Cognitive Load", info="0 = relaxed, 10 = extremely stressful"),
+    gr.Radio(choices=[0, 1], label="Task Success", info="1 = Success, 0 = Not Successful")
 ]
 
-outputs = gr.Textbox(label="Optimal Hours Tomorrow")
+outputs = gr.Textbox(label="Optimal Working Hours Tomorrow", lines=1, interactive=False)
 
 gr.Interface(
     fn=predict_optimal_hours,
     inputs=inputs,
     outputs=outputs,
-    title="Optimal Coding Hours Predictor",
-    description="Predict the optimal coding hours for tomorrow based on today's metrics."
-).launch()
+    title="Optimal Working Hours For Developers",
+    description=(
+        "Predict your optimal coding hours for tomorrow based on today's metrics.<br>"
+        "<ul>"
+        "<li>Fill in your daily stats below.</li>"
+        "<li>Get a personalized recommendation for tomorrow's coding hours!</li>"
+        "</ul>"
+        "<b>Tip:</b> Adjust your habits and see how it affects your optimal hours."
+    ),
+    theme="soft",
+    allow_flagging="never"
+).launch(share=True)
