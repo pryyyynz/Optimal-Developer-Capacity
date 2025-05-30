@@ -1,10 +1,3 @@
----
-title: Optimal-Developer-Capacity
-app_file: app.py
-sdk: gradio
-sdk_version: 5.32.0
----
-
 # Optimal Developer Capacity
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Optimal--Developer--Capacity-blue?logo=Hugging%20Face)](https://huggingface.co/spaces/pryyyynz/Optimal-Developer-Capacity)
